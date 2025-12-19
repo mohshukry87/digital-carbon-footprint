@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Digital Carbon Footprint – How Our Online Habits Affect the Earth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --card: #111827;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.18);
+      --accent-2: #38bdf8;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --radius-lg: 18px;
+      --radius-xl: 26px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.7);
+      --shadow-subtle: 0 10px 25px rgba(15, 23, 42, 0.5);
+      --transition-fast: 180ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #172554 0, #020617 35%, #000000 100%);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 32px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1120px;
+    }
+
+    header.hero {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(56, 189, 248, 0.12));
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 30px;
+      padding: 22px 22px 18px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.3fr);
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (max-width: 800px) {
+      header.hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.12), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(34, 197, 94, 0.15), transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .hero-main,
+    .hero-visual {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-2);
+      margin-bottom: 10px;
+    }
+
+    .hero-kicker span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px var(--accent-soft);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 4vw, 32px);
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 span.highlight {
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 16px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .chip strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .hero-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-badge-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      background: #020617;
+    }
+
+    .hero-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .hero-visual-main {
+      width: 100%;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #020617;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .hero-visual-main img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+
+    .hero-visual-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    /* Layout sections */
+
+    main {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    section {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 16px 15px 14px;
+      box-shadow: var(--shadow-subtle);
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 55%);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.85);
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card-title {
+      font-size: 14px;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px var(--accent-soft);
+    }
+
+    .card-metric {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 4px 0 3px;
+    }
+
+    .card-tagline {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 3px;
+    }
+
+    .card-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .card-footnote {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    /* Bar chart */
+
+    .chart-card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 16px 15px 12px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .chart-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chart-title-row h3 {
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .chart-title-row span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .chart {
+      margin-top: 4px;
+    }
+
+    .chart-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .chart-label {
+      flex: 0 0 110px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chart-bar-track {
+      flex: 1;
+      height: 14px;
+      border-radius: 999px;
+      background: #020617;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .chart-bar {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.4);
+      transform-origin: left center;
+      animation: growBar 1.3s ease-out forwards;
+    }
+
+    .chart-bar.secondary {
+      background: linear-gradient(90deg, #f97316, #facc15);
+    }
+
+    .chart-value {
+      flex: 0 0 60px;
+      font-size: 12px;
+      text-align: right;
+      color: #e5e7eb;
+    }
+
+    .chart-footnote {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    @keyframes growBar {
+      from { transform: scaleX(0.1); }
+      to   { transform: scaleX(1); }
+    }
+
+    /* Accordion */
+
+    .accordion {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-subtle);
+      overflow: hidden;
+    }
+
+    .accordion details {
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.05), transparent 55%);
+    }
+
+    .accordion details:last-of-type {
+      border-bottom: none;
+    }
+
+    .accordion summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion summary span.label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .accordion summary span.badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--accent-2);
+    }
+
+    .accordion summary span.chevron {
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: transform var(--transition-fast);
+    }
+
+    details[open] summary span.chevron {
+      transform: rotate(90deg);
+      color: var(--accent);
+    }
+
+    .accordion-content {
+      padding: 0 14px 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .accordion-content ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .accordion-content li {
+      margin-bottom: 4px;
+    }
+
+    /* Visual snapshots */
+
+    .snapshots {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 14px 12px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .snapshots-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .snapshot {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 0.95);
+      background: #020617;
+    }
+
+    .snapshot img {
+      width: 100%;
+      display: block;
+    }
+
+    .snapshot-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 4px 6px 7px;
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .snapshot-caption a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    .snapshot-caption a:hover {
+      text-decoration: underline;
+    }
+
+    .snapshots-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Footer tip */
+
+    footer {
+      margin-top: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer strong {
+      color: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+<div class="page">
+  <div class="shell">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-main">
+        <div class="hero-kicker">
+          <span class="dot"></span>
+          <span>Digital footprint • Daily habits</span>
+        </div>
+        <h1>
+          Your <span class="highlight">digital carbon footprint</span><br />
+          and how online life warms the planet
+        </h1>
+        <p class="hero-subtitle">
+          Every search, stream, and stored file uses electricity in devices, networks, and data centres.
+          Together, these digital activities make up a noticeable share of global greenhouse gas emissions.
+        </p>
+
+        <div class="hero-chips">
+          <div class="chip">
+            <strong>3–4%</strong>
+            <span>of global greenhouse gas emissions come from digital tech and online services.</span>
+          </div>
+          <div class="chip">
+            <strong>36–55 g CO₂</strong>
+            <span>for about one hour of HD video streaming, depending on region and device.</span>
+          </div>
+          <div class="chip">
+            <strong>0.3–4 g CO₂</strong>
+            <span>for a typical email, more with large attachments or mass campaigns.</span>
+          </div>
+        </div>
+
+        <div class="hero-footer">
+          <div class="hero-badge">
+            <span class="hero-badge-icon">◎</span>
+            <span>Goal: understand the impact &amp; learn low-effort ways to shrink it.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-visual-main">
+          <!-- Source: Sangfor Technologies – Digital Carbon Footprint article -->
+          <img src="https://www.sangfor.com/sites/default/files/inline-images/Digital-Carbon-Footprint.jpg"
+               alt="Illustration of a digital carbon footprint with green icons over a laptop." />
+        </div>
+        <div class="hero-visual-caption">
+          Image source: <a href="https://www.sangfor.com/glossary/cloud-and-infrastructure/digital-carbon-footprint"
+                          style="color:#38bdf8;text-decoration:none;" target="_blank" rel="noopener noreferrer">
+            Sangfor Technologies
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <!-- LEFT COLUMN: concepts & numbers -->
+      <div>
+        <!-- What it is -->
+        <section>
+          <div class="section-title">Overview</div>
+          <div class="cards">
+            <article class="card">
+              <h3 class="card-title">
+                <span class="card-dot"></span>
+                What is a digital carbon footprint?
+              </h3>
+              <p class="card-body">
+                It’s the total greenhouse gases created by all the digital things we use:
+                manufacturing and powering phones, laptops and routers; building and cooling
+                data centres; and moving data across global networks while we browse, scroll,
+                game, or stream.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-tagline">Global share</div>
+              <div class="card-metric">3–4 %</div>
+              <h3 class="card-title">
+                <span class="card-dot"></span>
+                Digital vs. the world
+              </h3>
+              <p class="card-body">
+                Estimates suggest that the information and communication technology (ICT) sector
+                – including devices, networks, and data centres – generates around
+                <strong>3–4% of global greenhouse gas emissions</strong>, and this share is rising as
+                more services move online.
+              </p>
+              <p class="card-footnote">
+                That’s similar to or higher than the climate impact of aviation.
+              </p>
+            </article>
+
+            <article class="card">
+              <div class="card-tagline">Everyday actions</div>
+              <div class="card-metric">Small but constant</div>
+              <h3 class="card-title">
+                <span class="card-dot"></span>
+                Why habits matter
+              </h3>
+              <p class="card-body">
+                The impact of a single email or video is modest, but billions of people are online
+                every day. Always-on devices, endless backups, autoplay videos and unused apps add
+                up to huge demand for electricity and hardware.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- Mini bar chart -->
+        <section>
+          <div class="section-title">Context</div>
+          <div class="chart-card">
+            <div class="chart-title-row">
+              <h3>How big is the internet’s footprint?</h3>
+              <span>Rough comparison of global CO₂ shares</span>
+            </div>
+            <div class="chart">
+              <div class="chart-row">
+                <div class="chart-label">Digital / ICT</div>
+                <div class="chart-bar-track">
+                  <!-- ~3.5% represented as 100% width -->
+                  <div class="chart-bar" style="width:100%;"></div>
+                </div>
+                <div class="chart-value">≈3.5%</div>
+              </div>
+
+              <div class="chart-row">
+                <div class="chart-label">Aviation</div>
+                <div class="chart-bar-track">
+                  <!-- ~2.5% relative to 3.5% -->
+                  <div class="chart-bar secondary" style="width:71%;"></div>
+                </div>
+                <div class="chart-value">≈2.5%</div>
+              </div>
+            </div>
+            <p class="chart-footnote">
+              The exact values vary by study and year, but they show that our digital life
+              already has a climate impact in the same order of magnitude as flying.
+            </p>
+          </div>
+        </section>
+
+        <!-- Accordion: how habits affect earth -->
+        <section>
+          <div class="section-title">How online habits affect the Earth</div>
+          <div class="accordion">
+
+            <details open>
+              <summary>
+                <span class="label">
+                  <span>Streaming &amp; video platforms</span>
+                </span>
+                <span class="chevron">›</span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Video streaming is one of the heaviest uses of data. Each hour of HD video
+                  can cause on the order of <strong>tens of grams of CO₂</strong>, mainly through
+                  the electricity used by your device, home router, network equipment, and the
+                  data centre hosting the content.
+                </p>
+                <ul>
+                  <li>Autoplay and background streaming keep traffic going even when nobody is watching.</li>
+                  <li>Huge back-catalogues of shows, often stored in multiple copies, require storage and cooling.</li>
+                  <li>Higher resolutions (4K, 8K) move more data, increasing energy use when networks are inefficient.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="label">
+                  <span>Emails, chats &amp; online work</span>
+                  <span class="badge">Tiny × billions</span>
+                </span>
+                <span class="chevron">›</span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  A single short email might emit around a fraction of a gram to a few grams
+                  of CO₂, depending on attachments and how many people receive it. That sounds
+                  negligible, but globally we send and store hundreds of billions of messages.
+                </p>
+                <ul>
+                  <li>Large attachments and images increase data transfer and storage needs.</li>
+                  <li>Old messages and unused newsletters still live on servers drawing energy.</li>
+                  <li>Reply-all culture multiplies the footprint of every message.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="label">
+                  <span>Cloud storage &amp; “digital hoarding”</span>
+                </span>
+                <span class="chevron">›</span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Photos, backups and forgotten files are stored in giant data centres.
+                  These facilities need servers, cooling, and backup power. Keeping everything
+                  forever means more hardware and more electricity over time.
+                </p>
+                <ul>
+                  <li>Duplicate photos, unused backups and old projects keep servers busy 24/7.</li>
+                  <li>“Dark data” – information that is stored but never used – increases emissions without adding value.</li>
+                  <li>When hardware is replaced, manufacturing and e-waste add extra environmental pressure.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="label">
+                  <span>Devices &amp; upgrades</span>
+                  <span class="badge">Hidden impact</span>
+                </span>
+                <span class="chevron">›</span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  A big part of a device’s lifetime emissions is locked in before you even
+                  unbox it. Mining metals, manufacturing chips and shipping laptops and
+                  phones all require large amounts of energy and resources.
+                </p>
+                <ul>
+                  <li>Keeping devices longer often saves more emissions than any software tweak.</li>
+                  <li>Repairing or refurbishing spreads manufacturing emissions over more years.</li>
+                  <li>Recycling recovers some materials but can’t erase the original footprint.</li>
+                </ul>
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="label">
+                  <span>AI, gaming &amp; emerging tech</span>
+                </span>
+                <span class="chevron">›</span>
+              </summary>
+              <div class="accordion-content">
+                <p>
+                  Newer digital services like large-scale AI, cloud gaming and crypto
+                  can consume huge amounts of computing power. Their impact depends heavily on
+                  how efficient the hardware is and how clean the electricity grid is.
+                </p>
+                <ul>
+                  <li>Training and running large AI models requires powerful data-centre hardware.</li>
+                  <li>Cloud gaming moves heavy graphics processing out of your console and into the cloud.</li>
+                  <li>Policies, efficiency improvements and renewable energy are key to keeping growth in check.</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN: visuals & tips -->
+      <div>
+        <!-- Visual snapshots / images from sources -->
+        <section>
+          <div class="section-title">Visual snapshots</div>
+          <div class="snapshots">
+            <div class="snapshots-grid">
+              <figure class="snapshot">
+                <!-- Source: Simply WS – Carbon footprint of an email infographic -->
+                <img src="https://www.simplyws.com/wp-content/uploads/WSSocial_January202419_LI_IG_1200x1200_EmailCarbonFootprint-1024x1024.jpg"
+                     alt="Infographic showing the carbon footprint of different types of emails." />
+                <figcaption class="snapshot-caption">
+                  Carbon footprint of different kinds of emails, based on estimates by
+                  Mike Berners-Lee. Source:
+                  <a href="https://www.simplyws.com/wonder/digital-sustainability/"
+                     target="_blank" rel="noopener noreferrer">WS – Digital Sustainability</a>.
+                </figcaption>
+              </figure>
+
+              <figure class="snapshot">
+                <!-- Reuse the main visual as a secondary reference -->
+                <img src="https://www.sangfor.com/sites/default/files/inline-images/Digital-Carbon-Footprint.jpg"
+                     alt="Digital carbon footprint illustration with icons for energy and environment." />
+                <figcaption class="snapshot-caption">
+                  Concept image for digital carbon footprint, highlighting energy and data use.
+                  Source:
+                  <a href="https://www.sangfor.com/glossary/cloud-and-infrastructure/digital-carbon-footprint"
+                     target="_blank" rel="noopener noreferrer">Sangfor Technologies</a>.
+                </figcaption>
+              </figure>
+            </div>
+            <p class="snapshots-note">
+              These graphics are loaded directly from their original sources. If you prefer,
+              you can replace the <code>src</code> URLs with local image files.
+            </p>
+          </div>
+        </section>
+
+        <!-- Actionable tips -->
+        <section>
+          <div class="section-title">Small actions, real impact</div>
+          <div class="cards">
+            <article class="card">
+              <h3 class="card-title">
+                <span class="card-dot"></span>
+                Stream a little smarter
+              </h3>
+              <p class="card-body">
+                Turn off autoplay, download favourites instead of repeatedly streaming them,
+                and use Wi-Fi instead of mobile data when possible. Watching on a smaller device
+                (phone or laptop) usually uses less power than a big TV.
+              </p>
+            </article>
+
+            <article class="card">
+              <h3 class="card-title">
+                <span class="card-dot"></span>
+                Clean up your digital clutter
+              </h3>
+              <p class="card-body">
+                Regularly delete unused files, old backups, duplicate photos and newsletters
+                you never read. Think of it as spring-cleaning your corner of the cloud.
+              </p>
+            </article>
+
+            <article class="card">
+              <h3 class="card-title">
+                <span class="card-dot"></span>
+                Love your devices longer
+              </h3>
+              <p class="card-body">
+                Use devices for as many years as you can, repair when possible, and buy
+                second-hand or refurbished hardware if it meets your needs. Fewer upgrades
+                mean fewer factories running and less e-waste.
+              </p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      This page is a simplified educational overview. Exact numbers vary by study, but the
+      message is consistent: <strong>using the internet thoughtfully helps the climate too.</strong>
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>
